@@ -1,5 +1,6 @@
 package com.project.Haru_Mail.common;
 
+import com.project.Haru_Mail.common.jwt.JwtAuthenticationFilter;
 import com.project.Haru_Mail.common.jwt.JwtTokenizer;
 import com.project.Haru_Mail.domain.auth.CustomOAuth2UserService;
 import com.project.Haru_Mail.domain.auth.OAuth2SuccessHandler;
@@ -13,6 +14,8 @@ import org.springframework.web.cors.CorsUtils;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtTokenizer jwtTokenizer;
     private final CustomOAuth2UserService oauth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
@@ -32,6 +35,10 @@ public class SecurityConfig {
                         oauth
                                 .userInfoEndpoint(u -> u.userService(oauth2UserService))  // OAuth2 사용자 정보 처리 서비스 설정
                                 .successHandler(oAuth2SuccessHandler)  // OAuth2 로그인 후 성공 핸들러 설정
+                )
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(jwtTokenizer),  // JWT 필터 추가
+                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class  // 인증 필터 전에 추가
                 );
         return http.build();
     }
