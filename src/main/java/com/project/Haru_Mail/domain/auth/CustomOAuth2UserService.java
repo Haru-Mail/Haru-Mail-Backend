@@ -27,6 +27,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // 구글이 반환하는 'sub' 속성: 구글 고유 ID
         String googleId = oAuth2User.<String>getAttribute("sub");
         String email    = oAuth2User.<String>getAttribute("email");
+        String name     = oAuth2User.getAttribute("name");
 
         // DB 저장 or 조회
         userRepo.findByGoogleId(googleId)
@@ -34,7 +35,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                         User.builder()
                                 .googleId(googleId)
                                 .email(email)
-                                .username(email.split("@")[0]) // 이메일 앞부분을 기본 닉네임으로 설정
+                                .username(name) // 사용자 이름을 기본 닉네임으로 설정
                                 .frequency(7)  // 메일 발송 빈도 기본값은 7일
                                 .build()
                 ));
