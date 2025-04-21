@@ -1,7 +1,6 @@
 package com.project.Haru_Mail.domain.auth;
 
 import com.project.Haru_Mail.common.jwt.JwtTokenizer;
-import com.project.Haru_Mail.domain.user.User;
 import com.project.Haru_Mail.domain.user.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,27 +30,23 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
         String email = oAuth2User.getAttribute("email");
+
         // JWT 생성 후 쿠키에 저장
-        storeTokensInCookies(response, email);
+        updateTokensInCookies(response, email);
 
         // 로그인 성공 후 리다이렉트 (사용자 정보는 URL에 포함하지 않음)
-        getRedirectStrategy().sendRedirect(request, response, "http://localhost:63342/Haru-Mail/src/main/resources/templates/success.html");
+        getRedirectStrategy().sendRedirect(request, response, "http://localhost:5173/success");
     }
 
-    private void storeTokensInCookies(HttpServletResponse response, String email) {
+    private void updateTokensInCookies(HttpServletResponse response, String email) {
         String accessToken = delegateAccessToken(email);  // Access Token 생성
         String refreshToken = delegateRefreshToken(email);  // Refresh Token 생성
 
-        saveUser(email, refreshToken);
+        // 사용자 정보 저장
+        userService.updateRefreshToken(email, refreshToken);
 
         // Access Token을 쿠키에 저장
         addTokenToCookie(response, "accessToken", accessToken);
-    }
-
-    private void saveUser(String email, String refreshToken){
-        User user = userService.findByEmail(email);  // 이메일로 사용자 찾기
-        user.setRefreshToken(refreshToken);  // 사용자에 리프레시 토큰 저장
-        userService.saveUser(user);  // 사용자 정보 저장
     }
 
     private void addTokenToCookie(HttpServletResponse response, String tokenName, String tokenValue) {
@@ -74,10 +69,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     private String delegateRefreshToken(String email) {
-        String subject = email;
         Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getRefreshTokenExpirationMinutes());
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
 
-        return jwtTokenizer.generateRefreshToken(subject, expiration, base64EncodedSecretKey);
+        return jwtTokenizer.generateRefreshToken(email, expiration, base64EncodedSecretKey);
     }
 }
