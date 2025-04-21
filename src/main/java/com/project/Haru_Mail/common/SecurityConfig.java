@@ -27,7 +27,7 @@ public class SecurityConfig {
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Stateless session 설정
                 .authorizeHttpRequests(auth ->
                         auth
-                                .requestMatchers("/login/oauth2/**").permitAll()  // OAuth2 로그인 경로에 대해 접근 허용
+                                .requestMatchers("/login/**").permitAll()  // OAuth2 로그인 경로에 대해 접근 허용
                                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                                 .anyRequest().authenticated()  // 그 외 요청은 인증 필요
                 )
