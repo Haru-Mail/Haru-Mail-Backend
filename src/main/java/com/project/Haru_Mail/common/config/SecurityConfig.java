@@ -1,4 +1,4 @@
-package com.project.Haru_Mail.common;
+package com.project.Haru_Mail.common.config;
 
 import com.project.Haru_Mail.common.jwt.JwtAuthenticationFilter;
 import com.project.Haru_Mail.common.jwt.JwtTokenizer;
