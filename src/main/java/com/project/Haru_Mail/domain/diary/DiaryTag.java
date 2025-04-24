@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 @Entity
 @Table(name = "DiaryTag")
+@IdClass(DiaryTagId.class) //복합키
 public class DiaryTag {
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
