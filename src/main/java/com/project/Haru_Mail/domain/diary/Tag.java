@@ -1,6 +1,7 @@
 package com.project.Haru_Mail.domain.diary;
 
 import com.project.Haru_Mail.domain.category.Category;
+import com.project.Haru_Mail.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,4 +22,8 @@ public class Tag {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category; // 카테고리 ID
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user; // 사용자 ID
 }
