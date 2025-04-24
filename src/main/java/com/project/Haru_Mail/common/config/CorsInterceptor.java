@@ -1,4 +1,4 @@
-package com.project.Haru_Mail.common;
+package com.project.Haru_Mail.common.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
