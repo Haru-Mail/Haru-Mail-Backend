@@ -49,15 +49,15 @@ public class UserService {
         }
         return null;  // 쿠키에 "accessToken"이 없으면 null 반환
     }
-
-
-    // refreshToken 업데이트
-    public void updateRefreshToken(String email, String refreshToken) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("해당 이메일(" + email + ")로 등록된 사용자가 존재하지 않습니다."));
-
-        user.setRefreshToken(refreshToken);
-        userRepository.save(user);
-
-    }
+//
+//
+//    // refreshToken 업데이트
+//    public void updateRefreshToken(String email, String refreshToken) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(()-> new IllegalArgumentException("해당 이메일(" + email + ")로 등록된 사용자가 존재하지 않습니다."));
+//
+//        user.setRefreshToken(refreshToken);
+//        userRepository.save(user);
+//
+//    }
 }
