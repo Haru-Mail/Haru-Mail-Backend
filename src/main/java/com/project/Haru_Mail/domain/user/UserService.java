@@ -3,9 +3,7 @@ package com.project.Haru_Mail.domain.user;
 import com.project.Haru_Mail.common.jwt.JwtTokenizer;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -51,15 +49,15 @@ public class UserService {
         }
         return null;  // 쿠키에 "accessToken"이 없으면 null 반환
     }
-
-
-    // refreshToken 업데이트
-    public void updateRefreshToken(String email, String refreshToken) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("해당 이메일(" + email + ")로 등록된 사용자가 존재하지 않습니다."));
-
-        user.setRefreshToken(refreshToken);
-        userRepository.save(user);
-
-    }
+//
+//
+//    // refreshToken 업데이트
+//    public void updateRefreshToken(String email, String refreshToken) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(()-> new IllegalArgumentException("해당 이메일(" + email + ")로 등록된 사용자가 존재하지 않습니다."));
+//
+//        user.setRefreshToken(refreshToken);
+//        userRepository.save(user);
+//
+//    }
 }
