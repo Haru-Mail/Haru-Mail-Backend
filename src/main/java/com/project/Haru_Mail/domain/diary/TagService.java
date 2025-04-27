@@ -36,13 +36,13 @@ public class TagService {
     }
 
     // 카테고리 ID로 태그 조회, 사용자 id로 커스텀 태그 걸러내야함
-    public List<Tag> getTagsByCategory(TagDto.ShowTagDto showTagDto) {
-        if (showTagDto.getCategoryId() == 6) {
+    public List<Tag> getTagsByCategory(Integer categoryId, Long userId) {
+        if (categoryId == 6) {
             // 사용자 커스텀 태그만
-            return tagRepository.findByCategoryIdAndUserUserId(showTagDto.getCategoryId(), showTagDto.getUserId());
+            return tagRepository.findByCategoryIdAndUserUserId(categoryId, userId);
         } else {
             // 시스템 기본 태그만
-            return tagRepository.findByCategoryId(showTagDto.getCategoryId());
+            return tagRepository.findByCategoryId(categoryId);
         }
     }
 }

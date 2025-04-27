@@ -14,11 +14,4 @@ public class TagDto {
         private Integer categoryId;
         private Long userId;
     }
-
-    @Data
-    @AllArgsConstructor
-    public static class ShowTagDto { //태그 조회
-        private Integer categoryId;
-        private Long userId;
-    }
 }

@@ -19,8 +19,7 @@ public class CategoryController {
 
     @GetMapping("/{categoryId}/{userId}")
     public ResponseEntity<List<Tag>> getTagsByCategory(@PathVariable Integer categoryId, @PathVariable Long userId) {
-        TagDto.ShowTagDto showTagDto = new TagDto.ShowTagDto(categoryId, userId);
-        List<Tag> tags = tagService.getTagsByCategory(showTagDto);
+        List<Tag> tags = tagService.getTagsByCategory(categoryId, userId);
 
         if (tags.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
