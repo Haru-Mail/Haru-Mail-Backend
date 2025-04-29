@@ -28,8 +28,4 @@ public class User {
     private String username;
 
     private Integer frequency;
-//
-//    // Refresh Token 저장 필드
-//    @Column(length = 500)
-//    private String refreshToken;
 }

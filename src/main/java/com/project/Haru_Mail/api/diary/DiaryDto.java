@@ -1,10 +1,7 @@
 package com.project.Haru_Mail.api.diary;
 
-import com.project.Haru_Mail.api.Tag.TagDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.List;
 
 public class DiaryDto {
     @Data
