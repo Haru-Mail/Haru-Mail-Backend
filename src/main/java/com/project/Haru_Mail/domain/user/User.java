@@ -28,4 +28,6 @@ public class User {
     private String username;
 
     private Integer frequency;
+
+    private Integer q_index;
 }
