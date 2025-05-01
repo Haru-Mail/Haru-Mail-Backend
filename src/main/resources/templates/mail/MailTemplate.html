@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>하루 메일</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            padding: 30px;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 500px;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+        }
+
+        .header {
+            background-color: #e41c1c;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 6px 6px 0 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .date {
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            color: black;
+        }
+        .question {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            line-height: 1.4;
+            text-align: center;
+        }
+        .image-container {
+            margin-top: 25px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            color: white;
+        }
+        .btn {
+            padding: 5px 8px;
+            background-color: #e41c1c;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            flex-grow: 0;
+            width: auto;
+            margin: 0 20px;
+            color: white;
+        }
+        .btn:first-child {
+            margin-left: 0;
+        }
+        .btn:last-child {
+            margin-right: 0;
+        }
+        .icon {
+            width: 20px;
+            vertical-align: middle;
+            margin-left: 3px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">하루 메일</div>
+
+    <div class="date" th:text="|${year}년 ${month}월 ${day}일 ${dayOfWeek}요일|">
+    </div>
+
+    <div class="question" th:text="${questionText}">
+    </div>
+
+    <div class="image-container">
+        <img src="cid:MailImage" width="160" alt="편지를 안고 있는 그림"/>
+    </div>
+
+    <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+            <td align="left">
+                <a href="http://localhost:5173/list"
+                   style="background-color:#e41c1c; color:white; padding:10px 15px; text-decoration:none; border-radius:8px; font-weight:bold;">
+                    일기 보기 📖
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://example.com/write-diary"
+                   style="background-color:#e41c1c; color:white; padding:10px 15px; text-decoration:none; border-radius:8px; font-weight:bold;">
+                    일기 쓰기 ✏️
+                </a>
+            </td>
+            <td align="right">
+                <a href="https://example.com/settings"
+                   style="background-color:#e41c1c; color:white; padding:10px 15px; text-decoration:none; border-radius:8px; font-weight:bold;">
+                    설정 ⚙️
+                </a>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

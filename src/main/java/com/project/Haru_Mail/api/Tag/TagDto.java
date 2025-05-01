@@ -3,9 +3,6 @@ package com.project.Haru_Mail.api.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDate;
-
-
 public class TagDto {
     @Data
     @AllArgsConstructor

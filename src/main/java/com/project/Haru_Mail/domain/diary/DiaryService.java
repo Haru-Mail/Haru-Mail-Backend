@@ -1,6 +1,5 @@
 package com.project.Haru_Mail.domain.diary;
 
-import com.project.Haru_Mail.api.Tag.TagDto;
 import com.project.Haru_Mail.api.diary.DiaryDto;
 import com.project.Haru_Mail.domain.user.User;
 import com.project.Haru_Mail.domain.user.UserRepository;
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Optional;
 
 @Service
 public class DiaryService {
