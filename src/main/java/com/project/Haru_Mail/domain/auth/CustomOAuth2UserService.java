@@ -37,6 +37,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                                 .email(email)
                                 .username(name) // 사용자 이름을 기본 닉네임으로 설정
                                 .frequency(7)  // 메일 발송 빈도 기본값은 7일
+                                .q_index(0) // 질문 인덱스
                                 .build()
                 ));
         // JWT 토큰 생성
