@@ -1,6 +1,5 @@
 package com.project.Haru_Mail.api.Category;
 
-import com.project.Haru_Mail.api.Tag.TagDto;
 import com.project.Haru_Mail.domain.diary.Tag;
 import com.project.Haru_Mail.domain.diary.TagService;
 import lombok.RequiredArgsConstructor;
