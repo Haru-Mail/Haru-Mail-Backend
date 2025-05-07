@@ -11,4 +11,10 @@ public class TagDto {
         private Integer categoryId;
         private Long userId;
     }
+
+    @Data
+    @AllArgsConstructor
+    public static class DiaryTagDto { //일기 태그 저장
+        private Integer tagId;
+    }
 }

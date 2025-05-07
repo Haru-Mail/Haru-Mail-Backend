@@ -12,4 +12,11 @@ public class DiaryDto {
         private String content; // Editor.js로 작성된 JSON
         private Long userId; // 사용자 ID
     }
+
+    @Data
+    @AllArgsConstructor
+    public static class DiaryRequestDto { // 일기 생성
+        private NewDiaryDto diary; // 일기 정보
+        private List<TagDto.DiaryTagDto> tags; // 태그 리스트
+    }
 }
