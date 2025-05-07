@@ -14,31 +14,36 @@ public class DiaryService {
     private final DiaryRepository diaryRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
-    //private final DiaryTagRepository diaryTagRepository; //태그랑 같이 저장할 때 사용
+    private final DiaryTagRepository diaryTagRepository;
 
-    public DiaryService(DiaryRepository diaryRepository, UserRepository userRepository, TagRepository tagRepository) {
+    public DiaryService(DiaryRepository diaryRepository, UserRepository userRepository, TagRepository tagRepository, DiaryTagRepository diaryTagRepository) {
         this.diaryRepository = diaryRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
+        this.diaryTagRepository = diaryTagRepository;
     }
 
-    // 일기 저장-태그 저장 안 함
-    public Diary createDiary(DiaryDto.NewDiaryDto request) {
+    // 일기+태그 저장
+    public Diary createDiary(DiaryDto.DiaryRequestDto request) {
         // 사용자 정보 조회 (userId로)
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository.findById(request.getDiary().getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // 다이어리 객체 생성
-        Diary diary = Diary.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .date(LocalDate.now())
-                .time(LocalTime.now())
-                .user(user)
-                .build();
+        Diary diary = new Diary(null, request.getDiary().getTitle(), request.getDiary().getContent(), LocalDate.now(), LocalTime.now(), user);
         diary = diaryRepository.save(diary); // DB에 저장
 
-        // 데이터베이스에 저장
+        // 태그 처리
+        for (TagDto.DiaryTagDto tagDto : request.getTags()) {
+            Tag tag = tagRepository.findById(tagDto.getTagId()).get();
+
+            // 일기와 태그 연결 (DiaryTag 저장)
+            DiaryTag diaryTag = new DiaryTag();
+            diaryTag.setDiary(diary);
+            diaryTag.setTag(tag);
+            diaryTagRepository.save(diaryTag);
+        }
+
         return diary;
     }
 }
