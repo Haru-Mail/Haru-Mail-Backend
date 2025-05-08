@@ -4,6 +4,8 @@ import com.project.Haru_Mail.api.Tag.TagDto;
 import com.project.Haru_Mail.domain.diary.Diary;
 import com.project.Haru_Mail.domain.diary.DiaryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,5 +26,19 @@ public class DiaryController {
         }
 
         return diaryService.createDiary(request);
+    }
+
+    @GetMapping("/{diaryId}")
+    public ResponseEntity<DiaryDto.DiaryInfoDto> LoadDiaryInfo(@PathVariable Integer diaryId) {
+        DiaryDto.DiaryInfoDto diary = diaryService.getDiaryInfo(diaryId); // 일기 상세정보
+
+        System.out.println("Diary title: " + diary.getTitle());
+        System.out.println("Diary title: " + diary.getContent());
+
+        for (String tag : diary.getTags()) {
+            System.out.println("Tag id: " + tag);
+        }
+
+        return new ResponseEntity<>(diary, HttpStatus.OK);
     }
 }
