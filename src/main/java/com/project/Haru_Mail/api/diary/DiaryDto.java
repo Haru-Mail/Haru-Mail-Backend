@@ -1,7 +1,11 @@
 package com.project.Haru_Mail.api.diary;
 
+import com.project.Haru_Mail.api.Tag.TagDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class DiaryDto {
     @Data
@@ -18,5 +22,15 @@ public class DiaryDto {
     public static class DiaryRequestDto { // 일기 생성
         private NewDiaryDto diary; // 일기 정보
         private List<TagDto.DiaryTagDto> tags; // 태그 리스트
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class DiaryInfoDto { // 일기 상세정보
+        private Integer diaryId;
+        private String title;
+        private String content;
+        private LocalDate date;
+        private List<String> tags; // 태그 리스트
     }
 }
