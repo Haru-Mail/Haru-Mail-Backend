@@ -1,5 +1,6 @@
 package com.project.Haru_Mail.domain.diary;
 
+import com.project.Haru_Mail.api.Tag.TagDto;
 import com.project.Haru_Mail.api.diary.DiaryDto;
 import com.project.Haru_Mail.domain.user.User;
 import com.project.Haru_Mail.domain.user.UserRepository;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 public class DiaryService {
@@ -45,5 +47,24 @@ public class DiaryService {
         }
 
         return diary;
+    }
+
+    public DiaryDto.DiaryInfoDto getDiaryInfo(Integer diaryId) {
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new RuntimeException("Diary not found"));
+
+        // DiaryTag에서 tag 이름 추출
+        List<DiaryTag> diaryTags = diaryTagRepository.findByDiaryId(diaryId);
+        List<String> tagNames = diaryTags.stream()
+                .map(diaryTag -> diaryTag.getTag().getName())
+                .toList();
+
+        return new DiaryDto.DiaryInfoDto(
+                diary.getId(),
+                diary.getTitle(),
+                diary.getContent(),
+                diary.getDate(),
+                tagNames
+        );
     }
 }
