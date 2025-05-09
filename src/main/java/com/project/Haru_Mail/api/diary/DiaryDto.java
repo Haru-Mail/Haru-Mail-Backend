@@ -1,7 +1,9 @@
 package com.project.Haru_Mail.api.diary;
 
 import com.project.Haru_Mail.api.Tag.TagDto;
+import com.project.Haru_Mail.domain.diary.Diary;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -32,5 +34,22 @@ public class DiaryDto {
         private String content;
         private LocalDate date;
         private List<String> tags; // 태그 리스트
+    }
+
+    @Data
+    @AllArgsConstructor
+    @Builder
+    public static class DiaryListItemDto {
+        private Integer id;
+        private String title;
+        private LocalDate date;
+
+        public static DiaryListItemDto fromEntity(Diary diary) {
+            return DiaryListItemDto.builder()
+                    .id(diary.getId())
+                    .title(diary.getTitle())
+                    .date(diary.getDate())
+                    .build();
+        }
     }
 }

@@ -2,8 +2,10 @@ package com.project.Haru_Mail.domain.diary;
 
 import com.project.Haru_Mail.api.Tag.TagDto;
 import com.project.Haru_Mail.api.diary.DiaryDto;
+import com.project.Haru_Mail.api.diary.DiaryDto.DiaryListItemDto;
 import com.project.Haru_Mail.domain.user.User;
 import com.project.Haru_Mail.domain.user.UserRepository;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -63,5 +65,12 @@ public class DiaryService {
                 diary.getDate(),
                 tagNames
         );
+    }
+
+    public List<DiaryListItemDto> getUserDiaries(User currentUser, int year, int month) {
+        return diaryRepository.findByUser(currentUser).stream()
+                .filter(diary -> diary.getDate().getYear() == year && diary.getDate().getMonthValue() == month)
+                .map(DiaryListItemDto::fromEntity)
+                .collect(Collectors.toList());
     }
 }
