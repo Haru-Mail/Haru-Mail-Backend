@@ -17,13 +17,25 @@ public class CategoryController {
     private final TagService tagService;
 
     @GetMapping("/{categoryId}/{userId}")
-    public ResponseEntity<List<Tag>> getTagsByCategory(@PathVariable Integer categoryId, @PathVariable Long userId) {
+    public ResponseEntity<List<TagDto.LoadTagDto>> getTagsByCategory(@PathVariable Integer categoryId, @PathVariable Long userId) {
         List<Tag> tags = tagService.getTagsByCategory(categoryId, userId);
+
+        // tags 출력
+        System.out.println("불러온 태그 목록:");
+        for (Tag tag : tags) {
+            System.out.println(tag.getName());
+        }
+
+        // tags를 DTO로 변환
+        List<TagDto.LoadTagDto> dtoList = tags.stream()
+                .map(tag -> new TagDto.LoadTagDto(tag.getId(), tag.getName()))
+                .toList();
+
 
         if (tags.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(tags, HttpStatus.OK);
+        return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
 }
