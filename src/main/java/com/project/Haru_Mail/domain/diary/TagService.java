@@ -36,8 +36,8 @@ public class TagService {
     }
 
     // 카테고리 ID로 태그 조회, 사용자 id로 커스텀 태그 걸러내야함
-    public List<Tag> getTagsByCategory(Integer categoryId, Long userId) {
+    public List<Tag> getTagsByCategory(Integer categoryId, User user) {
         // 사용자 커스텀 태그만
-        return tagRepository.findByCategoryIdAndUserUserId(categoryId, userId);
+        return tagRepository.findByCategoryIdAndUserUserId(categoryId, user.getUserId());
     }
 }

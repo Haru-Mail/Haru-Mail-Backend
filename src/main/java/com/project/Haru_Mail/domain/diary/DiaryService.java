@@ -16,6 +16,7 @@ public class DiaryService {
     private final DiaryRepository diaryRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
+
     private final DiaryTagRepository diaryTagRepository;
 
     public DiaryService(DiaryRepository diaryRepository, UserRepository userRepository, TagRepository tagRepository, DiaryTagRepository diaryTagRepository) {
@@ -26,11 +27,7 @@ public class DiaryService {
     }
 
     // 일기+태그 저장
-    public Diary createDiary(DiaryDto.DiaryRequestDto request) {
-        // 사용자 정보 조회 (userId로)
-        User user = userRepository.findById(request.getDiary().getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+    public Diary createDiary(DiaryDto.DiaryRequestDto request, User user) {
         // 다이어리 객체 생성
         Diary diary = new Diary(null, request.getDiary().getTitle(), request.getDiary().getContent(), LocalDate.now(), LocalTime.now(), user);
         diary = diaryRepository.save(diary); // DB에 저장
