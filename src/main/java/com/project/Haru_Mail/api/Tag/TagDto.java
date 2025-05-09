@@ -14,9 +14,14 @@ public class TagDto {
 
     @Data
     @AllArgsConstructor
-    public static class TagResponseDto {
-        private Integer id;
+    public static class DiaryTagDto { //일기 태그 저장
+        private Integer tagId;
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class LoadTagDto { //기타 태그 불러오기
+        private Integer tagId;
         private String name;
-        private String categoryName;
     }
 }

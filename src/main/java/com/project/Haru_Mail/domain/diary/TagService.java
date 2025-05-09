@@ -1,12 +1,10 @@
 package com.project.Haru_Mail.domain.diary;
 
 import com.project.Haru_Mail.api.Tag.TagDto;
-import com.project.Haru_Mail.api.Tag.TagDto.TagResponseDto;
 import com.project.Haru_Mail.domain.category.Category;
 import com.project.Haru_Mail.domain.category.CategoryRepository;
 import com.project.Haru_Mail.domain.user.User;
 import com.project.Haru_Mail.domain.user.UserRepository;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,22 +36,8 @@ public class TagService {
     }
 
     // 카테고리 ID로 태그 조회, 사용자 id로 커스텀 태그 걸러내야함
-    public List<TagResponseDto> getTagsByCategory(Integer categoryId, Long userId) {
-        List<Tag> tags;
-
-        if (categoryId == 6) {
-            // 사용자 커스텀 태그만
-            tags = tagRepository.findByCategoryIdAndUserUserId(categoryId, userId);
-        } else {
-            // 시스템 기본 태그만
-            tags = tagRepository.findByCategoryId(categoryId);
-        }
-        // 엔티티 -> DTO 반환
-        return tags.stream()
-                .map(tag -> new TagResponseDto(
-                        tag.getId(),
-                        tag.getName(),
-                        tag.getCategory().getName()
-                )).collect(Collectors.toList());
+    public List<Tag> getTagsByCategory(Integer categoryId, User user) {
+        // 사용자 커스텀 태그만
+        return tagRepository.findByCategoryIdAndUserUserId(categoryId, user.getUserId());
     }
 }

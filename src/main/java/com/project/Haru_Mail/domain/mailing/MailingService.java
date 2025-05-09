@@ -5,6 +5,7 @@ import com.project.Haru_Mail.domain.question.Question;
 import com.project.Haru_Mail.domain.question.QuestionRepository;
 import com.project.Haru_Mail.domain.user.User;
 import com.project.Haru_Mail.domain.user.UserRepository;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -124,6 +125,8 @@ public class MailingService {
     private void sendMail(MailRequestDto dto, User user, Question todayQuestion) throws Exception {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setFrom(new InternetAddress(user.getEmail(), "하루 메일", "UTF-8"));
 
         // 템플릿에 변수 전달
         Context context = new Context();

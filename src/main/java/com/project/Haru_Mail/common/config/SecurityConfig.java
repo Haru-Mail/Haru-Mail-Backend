@@ -7,6 +7,7 @@ import com.project.Haru_Mail.domain.auth.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsUtils;
@@ -22,13 +23,14 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm ->
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Stateless session 설정
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers("/login/**").permitAll()  // OAuth2 로그인 경로에 대해 접근 허용
                                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                                .requestMatchers(CorsUtils::isCorsRequest).permitAll()
                                 .anyRequest().authenticated()  // 그 외 요청은 인증 필요
                 )
                 .oauth2Login(oauth ->
