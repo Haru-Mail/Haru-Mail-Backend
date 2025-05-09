@@ -23,11 +23,7 @@ public class DiaryService {
     }
 
     // 일기 저장-태그 저장 안 함
-    public Diary createDiary(DiaryDto.NewDiaryDto request) {
-        // 사용자 정보 조회 (userId로)
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+    public Diary createDiary(DiaryDto.NewDiaryDto request, User user) {
         // 다이어리 객체 생성
         Diary diary = Diary.builder()
                 .title(request.getTitle())
@@ -36,9 +32,6 @@ public class DiaryService {
                 .time(LocalTime.now())
                 .user(user)
                 .build();
-        diary = diaryRepository.save(diary); // DB에 저장
-
-        // 데이터베이스에 저장
-        return diary;
+        return diaryRepository.save(diary);
     }
 }
