@@ -10,6 +10,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -164,5 +165,20 @@ public class MailingService {
             case SATURDAY -> "토";
             case SUNDAY -> "일";
         };
+    }
+
+    public void settingMailingFrequency(User currentUser, Map<String, String> body){
+        String frequency = body.get("selectedOption");
+
+        if("daily".equalsIgnoreCase(frequency)){
+            currentUser.setFrequency(7);
+        }else if("3times".equalsIgnoreCase(frequency)){
+            currentUser.setFrequency(3);
+        }else if("once".equalsIgnoreCase(frequency)){
+            currentUser.setFrequency(1);
+        }else{
+            currentUser.setFrequency(0);
+        }
+        userRepository.save(currentUser);
     }
 }
