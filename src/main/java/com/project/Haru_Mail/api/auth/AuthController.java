@@ -34,4 +34,10 @@ public class AuthController {
         String accessToken = authService.reissueAccessToken(request, response);
         return ResponseEntity.ok(Map.of("accessToken", accessToken));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
+        authService.logout(request, response);
+        return ResponseEntity.ok(Map.of("message", "로그아웃 되었습니다."));
+    }
 }

@@ -1,29 +1,23 @@
 package com.project.Haru_Mail.domain.refreshToken;
 
-import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
-@Getter
-@Setter
-@RedisHash(value = "refreshToken", timeToLive = 60 * 60 * 24 * 14) // 14일
-public class RefreshToken {
+import java.io.Serializable;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@RedisHash("refreshToken")  // Redis key prefix
+public class RefreshToken implements Serializable {
 
     @Id
-    private String id;  // 고유 식별자 필드를 추가
+    private String refreshToken; // 이 값이 Redis의 key로 사용됨
 
-    private String email; // 이메일은 id로 사용하지 않음
-
-    private String refreshToken;
-
-    @Indexed
     private String accessToken;
 
-    public RefreshToken(String email, String refreshToken, String accessToken) {
-        this.email = email;
-        this.refreshToken = refreshToken;
-        this.accessToken = accessToken;
-    }
+    private String email;
 }

@@ -2,26 +2,26 @@ package com.project.Haru_Mail.domain.auth;
 
 import com.project.Haru_Mail.common.jwt.JwtTokenizer;
 import com.project.Haru_Mail.domain.refreshToken.RefreshToken;
-import com.project.Haru_Mail.domain.refreshToken.RefreshTokenRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisTemplate<String, String> redisTemplate;
     private final JwtTokenizer jwtTokenizer;
 
     @Override
@@ -29,7 +29,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                                         Authentication authentication) throws IOException {
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-
         String email = oAuth2User.getAttribute("email");
 
         // JWT 생성 후 쿠키에 저장
@@ -44,8 +43,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refreshToken = delegateRefreshToken(email);  // Refresh Token 생성
 
         // Redis에 정보 저장
-        RefreshToken token = new RefreshToken(email, refreshToken, accessToken);
-        refreshTokenRepository.save(token);
+        saveTokensToRedis(email, refreshToken, accessToken);
 
         // 로그 출력
         System.out.println("[Redis 저장] 사용자 이메일: " + email);
@@ -59,12 +57,18 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         addTokenToCookie(response, "refreshToken", refreshToken, 14 * 24 * 60 * 60);
     }
 
-    private void addTokenToCookie(HttpServletResponse response, String tokenName, String tokenValue, Integer Time) {
+    private void saveTokensToRedis(String email, String refreshToken, String accessToken) {
+        // Redis에 직접 저장
+        redisTemplate.opsForValue().set(email + ":accessToken", accessToken);  // email:accessToken을 키로 저장
+        redisTemplate.opsForValue().set(email + ":refreshToken", refreshToken);  // email:refreshToken을 키로 저장
+    }
+
+    private void addTokenToCookie(HttpServletResponse response, String tokenName, String tokenValue, Integer time) {
         Cookie cookie = new Cookie(tokenName, tokenValue);
-        cookie.setHttpOnly(true);  // JavaScript에서 접근 불가
+        cookie.setHttpOnly(false);  // JavaScript에서 접근 불가
         cookie.setSecure(false);  // HTTPS에서만 사용할지 말지 (테스트 환경에선 false로 설정)
         cookie.setPath("/");  // 전체 도메인에서 사용 가능
-        cookie.setMaxAge(Time);  // 1시간 동안 유효
+        cookie.setMaxAge(time);  // 1시간 동안 유효
         response.addCookie(cookie);
     }
 
