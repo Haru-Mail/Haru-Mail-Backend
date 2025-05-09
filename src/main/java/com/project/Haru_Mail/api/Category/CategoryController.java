@@ -1,7 +1,10 @@
 package com.project.Haru_Mail.api.Category;
 
-import com.project.Haru_Mail.domain.diary.Tag;
+import com.project.Haru_Mail.api.Tag.TagDto.TagResponseDto;
 import com.project.Haru_Mail.domain.diary.TagService;
+import com.project.Haru_Mail.domain.user.User;
+import com.project.Haru_Mail.domain.user.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +18,13 @@ import java.util.List;
 public class CategoryController {
 
     private final TagService tagService;
+    private final UserService userService;
 
-    @GetMapping("/{categoryId}/{userId}")
-    public ResponseEntity<List<Tag>> getTagsByCategory(@PathVariable Integer categoryId, @PathVariable Long userId) {
-        List<Tag> tags = tagService.getTagsByCategory(categoryId, userId);
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<List<TagResponseDto>> getTagsByCategory(@PathVariable Integer categoryId,
+                                                                  HttpServletRequest request) {
+        User currentUser = userService.getCurrentUser(request);
+        List<TagResponseDto> tags = tagService.getTagsByCategory(categoryId, currentUser.getUserId());
 
         if (tags.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

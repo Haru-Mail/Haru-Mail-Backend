@@ -11,4 +11,12 @@ public class TagDto {
         private Integer categoryId;
         private Long userId;
     }
+
+    @Data
+    @AllArgsConstructor
+    public static class TagResponseDto {
+        private Integer id;
+        private String name;
+        private String categoryName;
+    }
 }
