@@ -1,11 +1,13 @@
 package com.project.Haru_Mail.api.diary;
 
 import com.project.Haru_Mail.api.Tag.TagDto;
+import com.project.Haru_Mail.api.diary.DiaryDto.DiaryListItemDto;
 import com.project.Haru_Mail.domain.diary.Diary;
 import com.project.Haru_Mail.domain.diary.DiaryService;
 import com.project.Haru_Mail.domain.user.User;
 import com.project.Haru_Mail.domain.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +48,14 @@ public class DiaryController {
         }
 
         return new ResponseEntity<>(diary, HttpStatus.OK);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<DiaryListItemDto>> getUserDiaries(HttpServletRequest request,
+                                                                 @RequestParam int year,
+                                                                 @RequestParam int month) {
+        User currentUser = userService.getCurrentUser(request);
+        List<DiaryDto.DiaryListItemDto> diaryList = diaryService.getUserDiaries(currentUser, year, month);
+        return ResponseEntity.ok(diaryList);
     }
 }
