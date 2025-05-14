@@ -19,12 +19,12 @@ public class TagService {
     private final UserRepository userRepository;
 
     // 태그 생성
-    public Tag createTag(TagDto.TagRequestDto requestDto) {
+    public Tag createTag(TagDto.TagRequestDto requestDto, User currentUser) {
         // 카테고리 ID 고정: 6
         Category category = categoryRepository.findById(6)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리 6번이 존재하지 않습니다."));
 
-        User user = userRepository.findById(requestDto.getUserId())
+        User user = userRepository.findById(currentUser.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Tag tag = new Tag();

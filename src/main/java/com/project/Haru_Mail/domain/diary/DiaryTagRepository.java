@@ -11,7 +11,7 @@ import java.util.List;
 public interface DiaryTagRepository extends JpaRepository<DiaryTag, DiaryTagId> {
     @Query(value = """
         SELECT dt.diary_id
-        FROM Diarytag dt
+        FROM Diary_Tag dt
         WHERE dt.tag_id IN (:tagIds)
         GROUP BY dt.diary_id
         HAVING COUNT(DISTINCT dt.tag_id) = :size
