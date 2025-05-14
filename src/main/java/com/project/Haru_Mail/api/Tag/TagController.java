@@ -32,4 +32,24 @@ public class TagController {
         return new ResponseEntity<>(tag, HttpStatus.CREATED); // 생성된 태그 반환 or 아이디만 반환
     }
 
+
+    @GetMapping("/search") // 태그 기반 검색
+    public ResponseEntity<List<TagDto.TagSearchDto>> searchByTags(@RequestParam List<Integer> tags,
+                                                                  HttpServletRequest httpServletRequest) {
+        User currentUser = userService.getCurrentUser(httpServletRequest);
+
+        System.out.println("userId = " + currentUser.getUserId()); // 디버깅용
+        for (Integer tagId : tags) {
+            System.out.println("Tag ID: " + tagId);
+        } // 디버깅용
+        List<Diary> diaries = diaryTagService.searchDiary(currentUser.getUserId(), tags);
+
+        // Diary 객체를 DiaryDTO로 변환
+        List<TagDto.TagSearchDto> searchList = diaries.stream()
+                .map(diary -> new TagDto.TagSearchDto(diary.getId(), diary.getTitle(), diary.getDate()))
+                .toList();
+
+        return ResponseEntity.ok(searchList);
+    }
+
 }
