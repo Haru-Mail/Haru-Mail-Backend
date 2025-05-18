@@ -94,9 +94,9 @@ public class MailingService {
 
         for (User user: users){
             // 관리자 이메일이면 건너뜀
-            if (adminEmail.equalsIgnoreCase(user.getEmail())) {
-                continue;
-            }
+            if (adminEmail.equalsIgnoreCase(user.getEmail())) continue;
+
+            if (!shoultSendTodat(user, today)) continue;
 
             int questionIndex = user.getQ_index();
             String questionContent = allQuestions[questionIndex % allQuestions.length]; // 순환 로직
@@ -120,6 +120,14 @@ public class MailingService {
             user.setQ_index((questionIndex+1) % allQuestions.length);
             userRepository.save(user);
         }
+    }
+
+    private boolean shoultSendTodat(User user, LocalDate today) {
+        int freq = user.getFrequency();
+        if (freq == 7) return true;
+        if (freq == 3) return today.getDayOfWeek().getValue() % 2 == 1; // 월, 수, 금
+        if (freq == 1) return today.getDayOfWeek() == DayOfWeek.SUNDAY;
+        return false;
     }
 
     private void sendMail(MailRequestDto dto, User user, Question todayQuestion) throws Exception {
