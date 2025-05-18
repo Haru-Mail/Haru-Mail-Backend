@@ -26,7 +26,7 @@ public class DiaryController {
         User currentUser = userService.getCurrentUser(httpServletRequest);
         System.out.println("Diary title: " + request.getDiary().getTitle());
         System.out.println("Diary content: " + request.getDiary().getContent());
-        System.out.println("Diary userId: " + request.getDiary().getUserId());
+        System.out.println("Diary userId: " + currentUser.getUserId());
 
         // 태그 리스트 출력
         for (TagDto.DiaryTagDto tag : request.getTags()) {
