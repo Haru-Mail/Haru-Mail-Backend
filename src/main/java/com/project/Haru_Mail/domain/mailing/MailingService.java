@@ -101,9 +101,12 @@ public class MailingService {
             int questionIndex = user.getQ_index();
             String questionContent = allQuestions[questionIndex % allQuestions.length]; // 순환 로직
 
-            Question todayQuestion = new Question();
-            todayQuestion.setContent(questionContent);
-            questionRepository.save(todayQuestion);
+            Question todayQuestion = questionRepository.findByContent(questionContent)
+                    .orElseGet(() -> {
+                        Question q = new Question();
+                        q.setContent(questionContent);
+                        return questionRepository.save(q);
+                    });
 
             MailRequestDto dto = new MailRequestDto(
                     user.getEmail(),
