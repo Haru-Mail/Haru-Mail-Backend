@@ -1,5 +1,6 @@
 package com.project.Haru_Mail.domain.user;
 
+import com.project.Haru_Mail.api.user.UserDto.UserSettingRequest;
 import com.project.Haru_Mail.common.jwt.JwtTokenizer;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,5 +49,22 @@ public class UserService {
             }
         }
         return null;  // 쿠키에 "accessToken"이 없으면 null 반환
+    }
+
+    public void updateUserSettings(UserSettingRequest request, HttpServletRequest httpRequest) {
+        User user = getCurrentUser(httpRequest);
+
+        int frequencyValue = switch (request.getSubscriptionFrequency()){
+            case "daily" -> 1;
+            case "every_other_day" -> 2;
+            case "weekly" -> 7;
+            default -> throw new IllegalArgumentException("잘못된 frequency 값입니다.");
+        };
+
+        user.setFrequency(frequencyValue);
+        System.out.println(request.isSubscriptionAgreement());
+        user.setAgreeToMail(request.isSubscriptionAgreement());
+
+        userRepository.save(user);
     }
 }
