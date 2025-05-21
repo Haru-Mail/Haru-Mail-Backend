@@ -30,4 +30,6 @@ public class User {
     private Integer frequency;
 
     private Integer q_index;
+
+    private boolean agreeToMail;
 }

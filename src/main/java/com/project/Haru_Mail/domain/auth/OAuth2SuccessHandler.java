@@ -35,7 +35,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         updateTokensInCookies(response, email);
 
         // 로그인 성공 후 리다이렉트 (사용자 정보는 URL에 포함하지 않음)
-        getRedirectStrategy().sendRedirect(request, response, "http://localhost:5173/list");
+        getRedirectStrategy().sendRedirect(request, response, "http://localhost:5173/oauth/callback");
     }
 
     private void updateTokensInCookies(HttpServletResponse response, String email) {
