@@ -186,9 +186,9 @@ public class MailingService {
 
         if("daily".equalsIgnoreCase(frequency)){
             currentUser.setFrequency(7);
-        }else if("3times".equalsIgnoreCase(frequency)){
+        }else if("every_other_day".equalsIgnoreCase(frequency)){
             currentUser.setFrequency(3);
-        }else if("once".equalsIgnoreCase(frequency)){
+        }else if("weekly".equalsIgnoreCase(frequency)){
             currentUser.setFrequency(1);
         }else{
             currentUser.setFrequency(0);
