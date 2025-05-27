@@ -11,13 +11,11 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@RedisHash("refreshToken")  // Redis key prefix
+@RedisHash("refreshToken")
 public class RefreshToken implements Serializable {
 
     @Id
-    private String refreshToken; // 이 값이 Redis의 key로 사용됨
+    private String refreshToken;  // Redis key
 
-    private String accessToken;
-
-    private String email;
+    private String email;         // 누구의 토큰인지 식별
 }

@@ -22,39 +22,43 @@ public class AuthService {
     private final RedisTemplate<String, RefreshToken> redisTemplate;
 
     public String reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
-        // 1) 쿠키에서 refreshToken 꺼내기
+        // 1. 쿠키 유무 확인
+        if (request.getCookies() == null) {
+            throw new RuntimeException("No cookies found");
+        }
+
+        // 2. RefreshToken 추출
         String refreshToken = Arrays.stream(request.getCookies())
                 .filter(c -> "refreshToken".equals(c.getName()))
                 .map(Cookie::getValue)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No RefreshToken"));
 
-        // 2) RefreshToken 유효성 검사
+        // 3. RefreshToken 유효성 검사
         if (!jwtTokenizer.validateToken(refreshToken)) {
             throw new RuntimeException("Invalid RefreshToken");
         }
 
-        // 3) Redis에서 accessToken으로 엔티티 조회
+        // 4. Redis 조회
         RefreshToken tokenEntity = redisTemplate.opsForValue().get(refreshToken);
         if (tokenEntity == null) {
             throw new RuntimeException("RefreshToken not found in Redis");
         }
 
-        // 4) email 꺼내기
+        // 5. Email 추출 및 검증
         String email = tokenEntity.getEmail();
+        if (!jwtTokenizer.getEmail(refreshToken).equals(email)) {
+            throw new RuntimeException("Token email mismatch");
+        }
 
-        // 5) 새로운 AccessToken 생성
+        // 6. AccessToken 생성
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
         String base64Key = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
         Date exp = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
         String newAccessToken = jwtTokenizer.generateAccessToken(claims, email, exp, base64Key);
 
-        // 6) Redis에 업데이트
-        tokenEntity.setAccessToken(newAccessToken);
-        redisTemplate.opsForValue().set(refreshToken, tokenEntity);
-
-        // 7) 쿠키에도 설정
+        // 7. 쿠키에 저장
         addTokenToCookie(response, "accessToken", newAccessToken, jwtTokenizer.getAccessTokenExpirationMinutes() * 60);
 
         return newAccessToken;
