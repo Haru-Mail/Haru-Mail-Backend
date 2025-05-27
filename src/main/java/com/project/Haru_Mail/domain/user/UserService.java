@@ -55,9 +55,9 @@ public class UserService {
         User user = getCurrentUser(httpRequest);
 
         int frequencyValue = switch (request.getSubscriptionFrequency()){
-            case "daily" -> 1;
-            case "every_other_day" -> 2;
-            case "weekly" -> 7;
+            case "daily" -> 7;
+            case "every_other_day" -> 3;
+            case "weekly" -> 1;
             default -> throw new IllegalArgumentException("잘못된 frequency 값입니다.");
         };
 
