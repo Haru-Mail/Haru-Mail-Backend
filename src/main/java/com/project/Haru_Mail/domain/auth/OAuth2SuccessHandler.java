@@ -5,7 +5,9 @@ import com.project.Haru_Mail.domain.refreshToken.RefreshToken;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -19,9 +21,10 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, RefreshToken> redisTemplate;
     private final JwtTokenizer jwtTokenizer;
 
     @Override
@@ -33,6 +36,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         // JWT 생성 후 쿠키에 저장
         updateTokensInCookies(response, email);
+
+        log.info("Redis 저장 완료 : " + email);
 
         // 로그인 성공 후 리다이렉트 (사용자 정보는 URL에 포함하지 않음)
         getRedirectStrategy().sendRedirect(request, response, "http://localhost:5173/oauth/callback");
@@ -46,9 +51,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         saveTokensToRedis(email, refreshToken, accessToken);
 
         // 로그 출력
-        System.out.println("[Redis 저장] 사용자 이메일: " + email);
-        System.out.println("[Redis 저장] AccessToken: " + accessToken);
-        System.out.println("[Redis 저장] RefreshToken: " + refreshToken);
 
         // Access Token을 쿠키에 저장
         addTokenToCookie(response, "accessToken", accessToken, 3600);
@@ -58,9 +60,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     private void saveTokensToRedis(String email, String refreshToken, String accessToken) {
-        // Redis에 직접 저장
-        redisTemplate.opsForValue().set(email + ":accessToken", accessToken);  // email:accessToken을 키로 저장
-        redisTemplate.opsForValue().set(email + ":refreshToken", refreshToken);  // email:refreshToken을 키로 저장
+        RefreshToken token = new RefreshToken(refreshToken, email);
+        redisTemplate.opsForValue().set(refreshToken, token, 7, TimeUnit.DAYS);
     }
 
     private void addTokenToCookie(HttpServletResponse response, String tokenName, String tokenValue, Integer time) {
