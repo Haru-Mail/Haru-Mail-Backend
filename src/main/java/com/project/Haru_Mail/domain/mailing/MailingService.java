@@ -13,14 +13,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class MailingService {
     private final JavaMailSender mailSender;
@@ -28,6 +31,17 @@ public class MailingService {
     private final UserRepository userRepository;
     private final TemplateEngine templateEngine;
     private final QuestionRepository questionRepository;
+
+    @Scheduled(cron = "0 0 20 * * *", zone =  "Asia/Seoul")
+    public void scheduledMailingJob(){
+        try{
+            log.info("메일 발송 작업 시작");
+            sendDailyMailToAllUsers();
+            log.info("메일 발송 완료");
+        }catch (Exception e){
+            log.error("메일 발송 중 오류 발생", e);
+        }
+    }
 
     // 임시 질문
     private final String[] allQuestions = {
@@ -147,7 +161,7 @@ public class MailingService {
         context.setVariable("dayOfWeek", dto.getDayOfWeek());
         context.setVariable("questionText", dto.getQuestionText());
 
-        String html = templateEngine.process("mail/MailTemplate", context);
+        String html = templateEngine.process("mail/question-mail.html", context);
         helper.setTo(dto.getEmail());
         helper.setSubject("하루 메일이 도착했어요 ✉");
         helper.setText(html, true);
@@ -156,9 +170,7 @@ public class MailingService {
         ClassPathResource imageResource = new ClassPathResource("static/images/MailImage.png");
         helper.addInline("MailImage", imageResource);
 
-        System.out.println("mail sending...");
         mailSender.send(message);
-        System.out.println("mail sent!");
 
 
         // 로그 저장
