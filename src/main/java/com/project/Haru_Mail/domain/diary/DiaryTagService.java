@@ -1,6 +1,5 @@
 package com.project.Haru_Mail.domain.diary;
 
-import com.project.Haru_Mail.api.diary.DiaryDto;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;

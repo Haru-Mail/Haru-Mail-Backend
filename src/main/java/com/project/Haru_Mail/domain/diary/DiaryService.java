@@ -16,14 +16,12 @@ import java.util.List;
 public class DiaryService {
 
     private final DiaryRepository diaryRepository;
-    private final UserRepository userRepository;
     private final TagRepository tagRepository;
 
     private final DiaryTagRepository diaryTagRepository;
 
     public DiaryService(DiaryRepository diaryRepository, UserRepository userRepository, TagRepository tagRepository, DiaryTagRepository diaryTagRepository) {
         this.diaryRepository = diaryRepository;
-        this.userRepository = userRepository;
         this.tagRepository = tagRepository;
         this.diaryTagRepository = diaryTagRepository;
     }

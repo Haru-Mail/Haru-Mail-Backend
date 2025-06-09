@@ -146,9 +146,9 @@
                     일기보기 📖
                 </a>
             </td>
-            <td>
-                <a th:href="@{'http://localhost:5173/editor/' + ${questionText}}"
-                   style="background-color:#e41c1c; color:white; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
+            <td align="center">
+                <a th:href="@{'http://localhost:5173/editor/' + ${#strings.replace(questionText, '?', '%3F')}}"
+                   style="background-color:#e41c1c; color:white; padding:10px 15px; text-decoration:none; border-radius:8px; font-weight:bold;">
                     일기쓰기 ✏️
                 </a>
             </td>
