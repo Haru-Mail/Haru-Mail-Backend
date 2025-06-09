@@ -110,7 +110,7 @@ public class MailingService {
             // 관리자 이메일이면 건너뜀
             if (adminEmail.equalsIgnoreCase(user.getEmail())) continue;
 
-            if (!shoultSendTodat(user, today)) continue;
+            if (!shouldSendToday(user, today)) continue;
 
             int questionIndex = user.getQ_index();
             String questionContent = allQuestions[questionIndex % allQuestions.length]; // 순환 로직
@@ -139,12 +139,16 @@ public class MailingService {
         }
     }
 
-    private boolean shoultSendTodat(User user, LocalDate today) {
+    private boolean shouldSendToday(User user, LocalDate today) {
         int freq = user.getFrequency();
-        if (freq == 7) return true;
-        if (freq == 3) return today.getDayOfWeek().getValue() % 2 == 1; // 월, 수, 금
-        if (freq == 1) return today.getDayOfWeek() == DayOfWeek.SUNDAY;
-        return false;
+        // 7: 매일, 3: 격일 (월, 수, 금), 1: 주간 (일요일)
+        if (freq == 7) return true; // 매일
+        if (freq == 3) { // 격일 (월, 수, 금)
+            DayOfWeek currentDay = today.getDayOfWeek();
+            return currentDay == DayOfWeek.MONDAY || currentDay == DayOfWeek.WEDNESDAY || currentDay == DayOfWeek.FRIDAY;
+        }
+        if (freq == 1) return today.getDayOfWeek() == DayOfWeek.SUNDAY; // 주간 (일요일)
+        return false; // 그 외 (빈도 0 또는 알 수 없는 값)
     }
 
     private void sendMail(MailRequestDto dto, User user, Question todayQuestion) throws Exception {
