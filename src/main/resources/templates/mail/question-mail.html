@@ -108,7 +108,7 @@
                 </a>
             </td>
             <td align="center">
-                <a th:href="@{'http://localhost:5173/editor/' + ${questionText}}"
+                <a th:href="@{'http://localhost:5173/editor/' + ${#strings.replace(questionText, '?', '%3F')}}"
                    style="background-color:#e41c1c; color:white; padding:10px 15px; text-decoration:none; border-radius:8px; font-weight:bold;">
                     일기 쓰기 ✏️
                 </a>
