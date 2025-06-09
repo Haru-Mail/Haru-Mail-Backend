@@ -1,6 +1,7 @@
 package com.project.Haru_Mail.domain.auth;
 
 import com.project.Haru_Mail.common.jwt.JwtTokenizer;
+import com.project.Haru_Mail.domain.mailing.MailingService;
 import com.project.Haru_Mail.domain.user.User;
 import com.project.Haru_Mail.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,40 +19,46 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private final UserRepository userRepo;
     private final JwtTokenizer jwtTokenizer;
+    private final MailingService mailingService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest req) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(req);
 
-        // 구글이 반환하는 'sub' 속성: 구글 고유 ID
         String googleId = oAuth2User.<String>getAttribute("sub");
         String email    = oAuth2User.<String>getAttribute("email");
         String name     = oAuth2User.getAttribute("name");
 
-        // DB 저장 or 조회
-        userRepo.findByGoogleId(googleId)
-                .orElseGet(() -> userRepo.save(
-                        User.builder()
-                                .googleId(googleId)
-                                .email(email)
-                                .username(name) // 사용자 이름을 기본 닉네임으로 설정
-                                .frequency(7)  // 메일 발송 빈도 기본값은 7일
-                                .q_index(0) // 질문 인덱스
-                                .agreeToMail(false)
-                                .build()
-                ));
-        // JWT 토큰 생성
-        String token = jwtTokenizer.createToken(email);
+        Optional<User> existingUser = userRepo.findByGoogleId(googleId);
+        User user;
 
-        // 기존 attributes에 토큰 추가
+        if (existingUser.isPresent()) {
+            user = existingUser.get();
+        } else {
+            user = userRepo.save(User.builder()
+                    .googleId(googleId)
+                    .email(email)
+                    .username(name)
+                    .frequency(7)
+                    .q_index(0)
+                    .agreeToMail(false)
+                    .build());
+
+            try {
+                mailingService.sendSubscriptionConfirmationEmail(user); // ✅ 신규 사용자에 한해 메일 발송
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        String token = jwtTokenizer.createToken(email);
         Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
         attributes.put("token", token);
 
-        // 반환
         return new DefaultOAuth2User(
-                Collections.emptyList(), // 권한 정보 추가 필요시 수정
-                attributes, "email" // 주 식별자 key
+                Collections.emptyList(),
+                attributes, "email"
         );
     }
 }
