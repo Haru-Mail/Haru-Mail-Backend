@@ -50,8 +50,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // Redis에 정보 저장
         saveTokensToRedis(email, refreshToken, accessToken);
 
-        // 로그 출력
-
         // Access Token을 쿠키에 저장
         addTokenToCookie(response, "accessToken", accessToken, 3600);
 
