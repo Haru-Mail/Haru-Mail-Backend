@@ -211,4 +211,32 @@ public class MailingService {
         }
         userRepository.save(currentUser);
     }
+
+    public void sendSubscriptionConfirmationEmail(User user) throws Exception {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setFrom(new InternetAddress(user.getEmail(), "하루 메일", "UTF-8")); // 발신자 이메일, 이름
+
+        Context context = new Context();
+        context.setVariable("userName", user.getUsername());
+
+        String html = templateEngine.process("mail/first-mail.html", context); // 새로운 템플릿 사용
+        helper.setTo(user.getEmail());
+        helper.setSubject("[하루 메일] 메일링 서비스 구독 확인"); // 메일 제목
+        helper.setText(html, true);
+
+        mailSender.send(message);
+    }
+
+    private String getSubscriptionFrequencyText(int frequency) {
+        return switch (frequency) {
+            case 7 -> "매일";
+            case 3 -> "격일 (월, 수, 금)";
+            case 1 -> "매주 일요일";
+            case 0 -> "구독 안 함";
+            default -> "알 수 없음";
+        };
+    }
 }
+
