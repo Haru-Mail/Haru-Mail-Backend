@@ -2,86 +2,127 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>하루 메일</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            padding: 30px;
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Nanum Gothic', 'Arial', sans-serif;
+            padding: 20px;
             background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            margin: 0;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
         }
 
         .container {
-            width: 500px;
-            background-color: #fff;
+            max-width: 550px;
+            margin: 30px auto;
+            background-color: #ffffff;
             padding: 30px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             border-radius: 12px;
+            text-align: center;
+            line-height: 1.6;
         }
 
         .header {
             background-color: #e41c1c;
             color: white;
-            font-size: 16px;
+            font-size: 20px;
             font-weight: bold;
-            padding: 10px 15px;
-            border-radius: 6px 6px 0 0;
-            margin-bottom: 20px;
+            padding: 12px 15px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 25px;
             text-align: center;
         }
+
         .date {
-            margin-top: 20px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
-            text-align: center;
-            color: black;
+            color: #555555;
+            margin-bottom: 10px;
         }
+
         .question {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: bold;
+            color: #333333;
             margin-top: 15px;
-            line-height: 1.4;
-            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.5;
         }
+
         .image-container {
             margin-top: 25px;
-            text-align: center;
             margin-bottom: 40px;
         }
-        .buttons {
-            margin-top: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            color: white;
+        .image-container img {
+            max-width: 180px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
         }
+
+        .button-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .button-table td {
+            padding: 0 5px;
+            text-align: center;
+        }
+
         .btn {
-            padding: 5px 8px;
+            display: inline-block; /* **블록 대신 인라인-블록으로 변경하여 width 적용** */
+            width: 150px; /* **버튼 너비 지정 (데스크톱)** */
+            padding: 8px 0; /* **상하 패딩만 주고 좌우 패딩은 width가 담당하도록 0으로 설정** */
             background-color: #e41c1c;
+            color: white;
+            text-decoration: none;
             border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            white-space: nowrap;
+            box-sizing: border-box; /* 패딩과 보더가 width에 포함되도록 */
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 13px;
+            color: #888888;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .footer a {
+            color: #e41c1c;
             text-decoration: none;
             font-weight: bold;
-            font-size: 14px;
-            text-align: center;
-            flex-grow: 0;
-            width: auto;
-            margin: 0 20px;
-            color: white;
         }
-        .btn:first-child {
-            margin-left: 0;
-        }
-        .btn:last-child {
-            margin-right: 0;
-        }
-        .icon {
-            width: 20px;
-            vertical-align: middle;
-            margin-left: 3px;
+
+        /* Responsive adjustments for smaller screens */
+        @media screen and (max-width: 600px) {
+            .container {
+                width: auto;
+                margin: 20px;
+                padding: 20px;
+            }
+            .header {
+                font-size: 18px;
+            }
+            .question {
+                font-size: 20px;
+            }
+            .btn {
+                width: 90px; /* **모바일 버튼 너비 조정** */
+                font-size: 13px;
+                padding: 6px 0;
+            }
+            .button-table td {
+                 padding: 0 3px;
+            }
         }
     </style>
 </head>
@@ -89,38 +130,41 @@
 <div class="container">
     <div class="header">하루 메일</div>
 
-    <div class="date" th:text="|${year}년 ${month}월 ${day}일 ${dayOfWeek}요일|">
-    </div>
+    <div class="date" th:text="|${year}년 ${month}월 ${day}일 ${dayOfWeek}요일|"></div>
 
-    <div class="question" th:text="${questionText}">
-    </div>
+    <div class="question" th:text="${questionText}"></div>
 
     <div class="image-container">
-        <img src="cid:MailImage" width="160" alt="편지를 안고 있는 그림"/>
+        <img src="cid:MailImage" width="180" alt="편지를 안고 있는 그림"/>
     </div>
 
-    <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+    <table class="button-table" cellpadding="0" cellspacing="0" role="presentation">
         <tr>
-            <td align="left">
+            <td>
                 <a href="http://localhost:5173/list"
-                   style="background-color:#e41c1c; color:white; padding:10px 15px; text-decoration:none; border-radius:8px; font-weight:bold;">
-                    일기 보기 📖
+                   style="background-color:#e41c1c; color:white; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
+                    일기보기 📖
                 </a>
             </td>
             <td align="center">
                 <a th:href="@{'http://localhost:5173/editor/' + ${#strings.replace(questionText, '?', '%3F')}}"
                    style="background-color:#e41c1c; color:white; padding:10px 15px; text-decoration:none; border-radius:8px; font-weight:bold;">
-                    일기 쓰기 ✏️
+                    일기쓰기 ✏️
                 </a>
             </td>
-            <td align="right">
+            <td>
                 <a href="http://localhost:5173/setting"
-                   style="background-color:#e41c1c; color:white; padding:10px 15px; text-decoration:none; border-radius:8px; font-weight:bold;">
+                   style="background-color:#e41c1c; color:white; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
                     설정 ⚙️
                 </a>
             </td>
         </tr>
     </table>
+
+    <div class="footer">
+        구독 정보 수정이나 수신 거부를 원하시면 언제든지 위 설정을 통해 관리하실 수 있습니다:<br/><br/>
+        [하루메일] 드림
+    </div>
 </div>
 </body>
 </html>

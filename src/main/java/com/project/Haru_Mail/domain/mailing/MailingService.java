@@ -110,7 +110,7 @@ public class MailingService {
             // 관리자 이메일이면 건너뜀
             if (adminEmail.equalsIgnoreCase(user.getEmail())) continue;
 
-            if (!shoultSendTodat(user, today)) continue;
+            if (!shouldSendToday(user, today)) continue;
 
             int questionIndex = user.getQ_index();
             String questionContent = allQuestions[questionIndex % allQuestions.length]; // 순환 로직
@@ -139,12 +139,16 @@ public class MailingService {
         }
     }
 
-    private boolean shoultSendTodat(User user, LocalDate today) {
+    private boolean shouldSendToday(User user, LocalDate today) {
         int freq = user.getFrequency();
-        if (freq == 7) return true;
-        if (freq == 3) return today.getDayOfWeek().getValue() % 2 == 1; // 월, 수, 금
-        if (freq == 1) return today.getDayOfWeek() == DayOfWeek.SUNDAY;
-        return false;
+        // 7: 매일, 3: 격일 (월, 수, 금), 1: 주간 (일요일)
+        if (freq == 7) return true; // 매일
+        if (freq == 3) { // 격일 (월, 수, 금)
+            DayOfWeek currentDay = today.getDayOfWeek();
+            return currentDay == DayOfWeek.MONDAY || currentDay == DayOfWeek.WEDNESDAY || currentDay == DayOfWeek.FRIDAY;
+        }
+        if (freq == 1) return today.getDayOfWeek() == DayOfWeek.SUNDAY; // 주간 (일요일)
+        return false; // 그 외 (빈도 0 또는 알 수 없는 값)
     }
 
     private void sendMail(MailRequestDto dto, User user, Question todayQuestion) throws Exception {
@@ -207,4 +211,32 @@ public class MailingService {
         }
         userRepository.save(currentUser);
     }
+
+    public void sendSubscriptionConfirmationEmail(User user) throws Exception {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setFrom(new InternetAddress(user.getEmail(), "하루 메일", "UTF-8")); // 발신자 이메일, 이름
+
+        Context context = new Context();
+        context.setVariable("userName", user.getUsername());
+
+        String html = templateEngine.process("mail/first-mail.html", context); // 새로운 템플릿 사용
+        helper.setTo(user.getEmail());
+        helper.setSubject("[하루 메일] 메일링 서비스 구독 확인"); // 메일 제목
+        helper.setText(html, true);
+
+        mailSender.send(message);
+    }
+
+    private String getSubscriptionFrequencyText(int frequency) {
+        return switch (frequency) {
+            case 7 -> "매일";
+            case 3 -> "격일 (월, 수, 금)";
+            case 1 -> "매주 일요일";
+            case 0 -> "구독 안 함";
+            default -> "알 수 없음";
+        };
+    }
 }
+

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>[하루 메일] 메일링 서비스 구독 확인</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            padding: 30px;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 500px;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            text-align: center; /* 전체 텍스트 중앙 정렬 */
+        }
+
+        .header {
+            background-color: #e41c1c;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 6px 6px 0 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .welcome-message {
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: #333;
+            line-height: 1.5;
+        }
+        .subscription-info {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+        .button-section {
+            margin-top: 30px;
+            margin-bottom: 30px; /* 버튼 아래 여백 추가 */
+        }
+        .btn {
+            background-color:#e41c1c;
+            /* color:white; <--- 이 부분은 이미 있지만, 메일 클라이언트 호환성을 위해 인라인으로 다시 명시 */
+            padding:10px 15px;
+            text-decoration:none;
+            border-radius:8px;
+            font-weight:bold;
+            font-size: 14px;
+            display: inline-block; /* 버튼 정렬을 위해 추가 */
+            margin: 0 10px; /* 버튼 간격 조정 */
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #888;
+            line-height: 1.4;
+        }
+        .footer a {
+            color: #e41c1c;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">[하루 메일]</div>
+
+    <div class="welcome-message">
+        안녕하세요 <strong th:text="${userName}">[사용자 이름]</strong>님, <br>
+        <strong th:text="${serviceName}">[하루 메일] 메일링 서비스</strong> 구독을 환영합니다! 🎉<br>
+        저희 서비스를 구독해 주셔서 진심으로 감사합니다.
+    </div>
+
+    <div class="subscription-info">
+        앞으로 <br>
+        <strong>[하루를 돌아보게하는 매일 다른 질문]</strong>을 받아보실 수 있습니다.
+        <br><br>
+        궁금한 점이 있으시면 언제든지 <a href="mailto:hahahalumail@gmail.com" style="color:#e41c1c; text-decoration:none;">hahahalumail@gmail.com</a>로 연락 주시기 바랍니다.
+    </div>
+
+    <div class="button-section">
+        <a href="http://localhost:5173/list"
+           style="background-color:#e41c1c; color: #ffffff !important; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
+            일기보기 📖
+        </a>
+        <a th:href="@{'http://localhost:5173/editor/' + ${questionText}}"
+           style="background-color:#e41c1c; color: #ffffff !important; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
+            일기쓰기 ✏️
+        </a>
+        <a href="http://localhost:5173/setting"
+           style="background-color:#e41c1c; color: #ffffff !important; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
+            설정 ⚙️
+        </a>
+    </div>
+
+    <div class="footer">
+        구독 정보 수정이나 수신 거부를 원하시면 언제든지 위 설정을 통해 관리하실 수 있습니다:<br><br/>
+        [하루메일] 드림
+    </div>
+</div>
+</body>
+</html>
