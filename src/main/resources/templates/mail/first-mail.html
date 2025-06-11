@@ -95,8 +95,8 @@
            style="background-color:#e41c1c; color: #ffffff !important; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
             일기보기 📖
         </a>
-        <a th:href="@{'http://localhost:5173/editor/' + ${questionText}}"
-           style="background-color:#e41c1c; color: #ffffff !important; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
+        <a th:href="@{'http://localhost:5173/editor/' + ${#strings.replace(questionText, '?', '%3F')}}"
+           style="background-color:#e41c1c; color:white; padding:10px 15px; text-decoration:none; border-radius:8px; font-weight:bold;">
             일기쓰기 ✏️
         </a>
         <a href="http://localhost:5173/setting"
