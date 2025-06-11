@@ -46,6 +46,19 @@
             margin-bottom: 30px;
             line-height: 1.4;
         }
+
+        .button-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .button-table td {
+            padding: 0 5px;
+            text-align: center;
+        }
+
         .button-section {
             margin-top: 30px;
             margin-bottom: 30px; /* 버튼 아래 여백 추가 */
@@ -59,7 +72,7 @@
             font-weight:bold;
             font-size: 14px;
             display: inline-block; /* 버튼 정렬을 위해 추가 */
-            margin: 0 10px; /* 버튼 간격 조정 */
+            margin: 0px 30px; /* 버튼 간격 조정 */
         }
         .footer {
             margin-top: 30px;
@@ -90,20 +103,28 @@
         궁금한 점이 있으시면 언제든지 <a href="mailto:hahahalumail@gmail.com" style="color:#e41c1c; text-decoration:none;">hahahalumail@gmail.com</a>로 연락 주시기 바랍니다.
     </div>
 
-    <div class="button-section">
-        <a href="http://localhost:5173/list"
-           style="background-color:#e41c1c; color: #ffffff !important; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
-            일기보기 📖
-        </a>
-        <a th:href="@{'http://localhost:5173/editor/' + ${#strings.replace(questionText, '?', '%3F')}}"
-           style="background-color:#e41c1c; color:white; padding:10px 15px; text-decoration:none; border-radius:8px; font-weight:bold;">
-            일기쓰기 ✏️
-        </a>
-        <a href="http://localhost:5173/setting"
-           style="background-color:#e41c1c; color: #ffffff !important; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
-            설정 ⚙️
-        </a>
-    </div>
+    <table class="button-table" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+            <td>
+                <a href="http://localhost:5173/list"
+                   style="background-color:#e41c1c; color:white; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
+                    일기보기 📖
+                </a>
+            </td>
+            <td align="center">
+                <a th:href="@{'http://localhost:5173/editor/제목을 입력해주세요!'}"
+                   style="background-color:#e41c1c; color:white; padding:10px 15px; text-decoration:none; border-radius:8px; font-weight:bold;">
+                    일기쓰기 ✏️
+                </a>
+            </td>
+            <td>
+                <a href="http://localhost:5173/setting"
+                   style="background-color:#e41c1c; color:white; padding:8px 0; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; width:110px; box-sizing:border-box;">
+                    설정 ⚙️
+                </a>
+            </td>
+        </tr>
+    </table>
 
     <div class="footer">
         구독 정보 수정이나 수신 거부를 원하시면 언제든지 위 설정을 통해 관리하실 수 있습니다:<br><br/>
