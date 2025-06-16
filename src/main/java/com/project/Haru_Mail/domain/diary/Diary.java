@@ -23,7 +23,6 @@ public class Diary {
     private String title; // 제목
 
     @Lob
-    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String content; // 내용
 
     private LocalDate date; // 작성 날짜

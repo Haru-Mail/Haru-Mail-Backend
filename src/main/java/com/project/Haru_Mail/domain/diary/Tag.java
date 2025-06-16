@@ -16,8 +16,6 @@ public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id; // 태그 ID
-
-    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String name; // 태그 이름
 
     @ManyToOne(fetch = FetchType.LAZY)
