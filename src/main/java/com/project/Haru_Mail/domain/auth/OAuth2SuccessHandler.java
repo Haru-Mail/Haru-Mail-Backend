@@ -52,9 +52,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         // Access Token을 쿠키에 저장
         addTokenToCookie(response, "accessToken", accessToken, 3600);
-
-        // Refresh Token을 쿠키에 저장
-        addTokenToCookie(response, "refreshToken", refreshToken, 14 * 24 * 60 * 60);
     }
 
     private void saveTokensToRedis(String email, String refreshToken, String accessToken) {
@@ -64,11 +61,16 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private void addTokenToCookie(HttpServletResponse response, String tokenName, String tokenValue, Integer time) {
         Cookie cookie = new Cookie(tokenName, tokenValue);
-        cookie.setHttpOnly(false);  // JavaScript에서 접근 불가
-        cookie.setSecure(false);  // HTTPS에서만 사용할지 말지 (테스트 환경에선 false로 설정)
-        cookie.setPath("/");  // 전체 도메인에서 사용 가능
-        cookie.setMaxAge(time);  // 1시간 동안 유효
-        response.addCookie(cookie);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(time);
+        String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=%s; HttpOnly; Secure; SameSite=None",
+                tokenName,
+                tokenValue,
+                time,
+                cookie.getPath());
+        response.addHeader("Set-Cookie", cookieHeader);
     }
 
     private String delegateAccessToken(String email) {
