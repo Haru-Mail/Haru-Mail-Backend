@@ -15,6 +15,5 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id; // 카테고리 ID
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String name; // 카테고리명
 }

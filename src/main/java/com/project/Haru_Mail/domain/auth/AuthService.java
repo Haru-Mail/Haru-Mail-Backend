@@ -91,7 +91,13 @@ public class AuthService {
         cookie.setSecure(false);  // HTTPS에서만 사용할지 말지 (실제 서비스 환경에서는 true로 설정)
         cookie.setPath("/");  // 전체 도메인에서 사용 가능
         cookie.setMaxAge(maxAge);  // 유효 시간 설정
-        response.addCookie(cookie);
+        String sameSiteValue = "None"; // Cross-Origin 상황에서 SameSite=None 사용
+        String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=%s; HttpOnly; Secure; SameSite=None",
+                tokenName,
+                tokenValue,
+                maxAge,
+                cookie.getPath());
+        response.addHeader("Set-Cookie", cookieHeader);
     }
 
     private void deleteCookie(String tokenName, HttpServletResponse response) {
@@ -100,6 +106,13 @@ public class AuthService {
         cookie.setSecure(false);  // HTTPS에서만 사용할지 말지 (실제 서비스 환경에서는 true로 설정)
         cookie.setPath("/");  // 전체 도메인에서 사용 가능
         cookie.setMaxAge(0);  // 즉시 만료
-        response.addCookie(cookie);
+        String sameSiteValue = "None"; // 설정 시 사용했던 SameSite 값과 동일하게 지정
+        String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=%s; HttpOnly; Secure; SameSite=%s",
+                tokenName,
+                "", // 삭제 시에는 값을 빈 문자열로 보내는 것이 일반적입니다.
+                0,  // Max-Age를 0으로 설정
+                cookie.getPath(), // "/"
+                sameSiteValue);
+        response.addHeader("Set-Cookie", cookieHeader);
     }
 }

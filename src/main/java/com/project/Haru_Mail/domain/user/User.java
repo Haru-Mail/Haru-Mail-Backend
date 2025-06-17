@@ -26,7 +26,6 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String username;
 
     private Integer frequency;
