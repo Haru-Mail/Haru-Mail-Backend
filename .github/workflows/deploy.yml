@@ -83,5 +83,5 @@ jobs:
             CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} \
             nohup java -jar build/libs/*.jar > app.log 2>&1 &
 
-            echo "♻️ Caddy 서버 재시작"
+            echo "Caddy 서버 재시작"
             sudo systemctl restart caddy
