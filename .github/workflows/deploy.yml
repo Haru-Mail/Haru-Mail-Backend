@@ -27,10 +27,10 @@ jobs:
           cache-disabled: false
 
       - name: ✅ Grant execute permission to gradlew
-        run: chmod +x ./gradlew
+        run: chmod +x gradlew
 
       - name: Build with Gradle Wrapper
-        run: sudo ./gradlew clean build
+        run: ./gradlew clean build
 
   deploy:
     needs: build
