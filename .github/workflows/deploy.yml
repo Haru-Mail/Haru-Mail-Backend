@@ -30,6 +30,19 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle Wrapper
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
+          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
         run: ./gradlew clean build -x test
 
   deploy:
