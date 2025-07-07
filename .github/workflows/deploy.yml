@@ -57,6 +57,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
+          debug: true
           script: |
             echo "✅ EC2 접속 성공, 배포 시작"
 
