@@ -19,7 +19,6 @@ public class Diary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id; // 다이어리 ID
 
-    @Column(columnDefinition = "NVARCHAR(255)")
     private String title; // 제목
 
     @Lob
