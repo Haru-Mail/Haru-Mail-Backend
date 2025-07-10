@@ -10,6 +10,7 @@
 <img src="https://img.shields.io/badge/cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white">
 <img src="https://img.shields.io/badge/jsonwebtokens-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white">
 <img src="https://img.shields.io/badge/googleauthenticator-4285F4?style=for-the-badge&logo=googleauthenticator&logoColor=white"> 
+<img src="https://img.shields.io/badge/githubactions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white"> 
 
 ## 🔸개발 환경
 - **백엔드**: Java 21, Spring Boot 3.4.2
