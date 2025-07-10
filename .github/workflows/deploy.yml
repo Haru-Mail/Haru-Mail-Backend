@@ -71,7 +71,7 @@ jobs:
             ./gradlew clean build -x test || exit 1
           
             echo "🔄 이전 앱 종료"
-            pkill -f 'java -jar'
+            pkill -f 'java -jar' || true
           
             echo "🚀 새 앱 실행 중..."
             GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
