@@ -60,15 +60,18 @@ jobs:
           debug: true
           script: |
             echo "✅ EC2 접속 성공, 배포 시작"
-
-            cd /root/.ssh/Haru-Mail-Backend
-
+          
+            cd ~/Haru-Mail-Backend || exit 1
+          
             echo "📦 최신 코드 pull"
-            git pull origin main
-
+            git pull origin main || exit 1
+          
+            echo "🔨 Gradle 빌드 시작"
+            ./gradlew clean build -x test || exit 1
+          
             echo "🔄 이전 앱 종료"
-            sudo pkill -f 'java' || true
-
+            pkill -f 'java -jar'
+          
             echo "🚀 새 앱 실행 중..."
             GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
             GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
@@ -83,6 +86,6 @@ jobs:
             CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} \
             CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} \
             nohup java -jar build/libs/*.jar > app.log 2>&1 &
-
-            echo "Caddy 서버 재시작"
+          
+            echo "🔁 Caddy 서버 재시작"
             sudo systemctl restart caddy
