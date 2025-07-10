@@ -1,6 +1,6 @@
-# Haru-Mail-Backend
+# Haru-Mail-Backend 
 
-## 사용기술
+## 🔸사용기술
 <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
 <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
 <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white">
@@ -11,7 +11,7 @@
 <img src="https://img.shields.io/badge/jsonwebtokens-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white">
 <img src="https://img.shields.io/badge/googleauthenticator-4285F4?style=for-the-badge&logo=googleauthenticator&logoColor=white"> 
 
-## 개발 환경
+## 🔸개발 환경
 - **백엔드**: Java 21, Spring Boot 3.4.2
 - **데이터베이스**: MySQL, Redis
 - **빌드 도구**: Gradle
@@ -19,7 +19,7 @@
 - **버전 관리**: Git, GitHub
 - **협업 도구** : Google Docs  
   
-## 데이터베이스 관계도
+## 🔸데이터베이스 관계도
 
 ### 테이블 구조
 <img src="img_1.png" width="460"/>
@@ -57,7 +57,7 @@
 - 메일 로그와 1:N 관계를 가짐
 
 
-## 아키텍처 구조
+## 🔸아키텍처 구조
 이 프로젝트는 AWS EC2 인스턴스에서 실행되며, 아래와 같은 주요 구성 요소로 이루어짐 
 
 **주요 구성 요소**  
