@@ -22,7 +22,7 @@
 ## 데이터베이스 관계도
 
 ### 테이블 구조
-<img src="img_1.png" width="500"/>
+<img src="img_1.png" width="450"/>
 
 **USER**
 - 사용자 정보
