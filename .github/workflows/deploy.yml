@@ -64,6 +64,7 @@ jobs:
             cd ~/Haru-Mail-Backend || exit 1
           
             echo "📦 최신 코드 pull"
+            git reset --hard HEAD
             git pull origin main || exit 1
           
             echo "🔨 Gradle 빌드 시작"
