@@ -62,8 +62,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           port: 22
-          timeout: 300
-          command_timeout: 600
+          timeout: 300s
+          command_timeout: 600s
           debug: true
           envs: GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GOOGLE_REDIRECT_URI,SPRING_DATASOURCE_URL,SPRING_DATASOURCE_USERNAME,DB_PASSWORD,JWT_SECRET_KEY,REDIS_PASSWORD,MAIL_USERNAME,MAIL_PASSWORD,CLOUDINARY_API_KEY,CLOUDINARY_API_SECRET
           script: |
