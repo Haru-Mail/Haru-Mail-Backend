@@ -61,13 +61,13 @@ jobs:
           script: |
             echo "✅ EC2 접속 성공, 배포 시작"
 
-            cd ~/.ssh/Haru-Mail-Backend
+            cd /root/.ssh/Haru-Mail-Backend
 
             echo "📦 최신 코드 pull"
             git pull origin main
 
             echo "🔄 이전 앱 종료"
-            pkill -f 'java' || true
+            sudo pkill -f 'java' || true
 
             echo "🚀 새 앱 실행 중..."
             GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
