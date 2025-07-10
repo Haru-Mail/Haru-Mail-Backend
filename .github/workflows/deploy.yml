@@ -11,25 +11,26 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
+    
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 21
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: ☕ Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-
-      - name: Setup Gradle
+          
+      - name: 🔧 Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-disabled: false
-
-      - name: ✅ Grant execute permission to gradlew
+          
+      - name: 🔑 Grant execute permission to gradlew
         run: chmod +x gradlew
-
-      - name: Build with Gradle Wrapper
+        
+      - name: 🏗️ Build with Gradle
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -43,52 +44,248 @@ jobs:
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
           CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
           CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
-        run: ./gradlew clean build -x test
+        run: |
+          echo "🏗️ Starting Gradle build…"
+          ./gradlew clean build -x test
+          echo "✅ Build completed successfully!"
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-
+    
     steps:
-      - name: Deploy to EC2
+      - name: 🚀 Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: 22
+          timeout: 300
+          command_timeout: 600
           debug: true
+          envs: GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GOOGLE_REDIRECT_URI,SPRING_DATASOURCE_URL,SPRING_DATASOURCE_USERNAME,DB_PASSWORD,JWT_SECRET_KEY,REDIS_PASSWORD,MAIL_USERNAME,MAIL_PASSWORD,CLOUDINARY_API_KEY,CLOUDINARY_API_SECRET
           script: |
-            echo "✅ EC2 접속 성공, 배포 시작"
-          
-            cd ~/Haru-Mail-Backend || exit 1
-          
-            echo "📦 최신 코드 pull"
-            git reset --hard HEAD
-            git pull origin main || exit 1
-          
-            echo "🔨 Gradle 빌드 시작"
-            ./gradlew clean build -x test || exit 1
-          
-            echo "🔄 이전 앱 종료"
-            if pgrep -f 'java -jar' > /dev/null; then
-              pkill -f 'java -jar'
+            set -e  # 에러 발생 시 즉시 종료
+            
+            echo "🎯 ===== 배포 시작 ====="
+            echo "📅 배포 시간: $(date)"
+            echo "🏠 현재 디렉토리: $(pwd)"
+            echo "👤 현재 사용자: $(whoami)"
+            
+            # 프로젝트 디렉토리로 이동
+            echo "📁 프로젝트 디렉토리로 이동 중…"
+            cd ~/Haru-Mail-Backend || {
+              echo "❌ 프로젝트 디렉토리를 찾을 수 없습니다: ~/Haru-Mail-Backend"
+              echo "📂 현재 홈 디렉토리 내용:"
+              ls -la ~/
+              exit 1
+            }
+            
+            # Git 상태 확인 및 최신 코드 가져오기
+            echo "📦 Git 상태 확인 및 최신 코드 가져오기..."
+            echo "🔄 현재 Git 상태:"
+            git status --porcelain
+            
+            echo "🔄 하드 리셋 실행 중..."
+            git reset --hard HEAD || {
+              echo "❌ Git reset 실패"
+              exit 1
+            }
+            
+            echo "⬇️ 최신 코드 Pull 중..."
+            git pull origin main || {
+              echo "❌ Git pull 실패"
+              echo "🔍 Git 상태 확인:"
+              git status
+              echo "🔍 원격 저장소 확인:"
+              git remote -v
+              exit 1
+            }
+            
+            echo "✅ 코드 업데이트 완료"
+            echo "📋 최신 커밋 정보:"
+            git log --oneline -1
+            
+            # Gradle 빌드
+            echo "🔨 Gradle 빌드 시작..."
+            ./gradlew clean build -x test || {
+              echo "❌ Gradle 빌드 실패"
+              echo "🔍 Gradle 버전 확인:"
+              ./gradlew --version
+              echo "🔍 Java 버전 확인:"
+              java -version
+              exit 1
+            }
+            
+            # JAR 파일 확인
+            echo "📦 JAR 파일 확인 중..."
+            echo "📂 build/libs 디렉토리 내용:"
+            ls -la build/libs/
+            
+            JAR_FILE=$(find build/libs -name "*.jar" -not -name "*-plain.jar" | head -1)
+            if [ -z "$JAR_FILE" ]; then
+              echo "❌ 실행 가능한 JAR 파일을 찾을 수 없습니다."
+              echo "📂 사용 가능한 파일들:"
+              find build/libs -name "*.jar"
+              exit 1
             fi
-          
-            echo "🚀 새 앱 실행 중..."
-            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-            GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }} \
-            SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
-            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
-            REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
-            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \
-            MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
-            CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} \
-            CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} \
-            nohup java -jar build/libs/*.jar > app.log 2>&1 &
-          
-            echo "🔁 Caddy 서버 재시작"
-            sudo systemctl restart caddy
+            
+            echo "✅ JAR 파일 발견: $JAR_FILE"
+            echo "📏 JAR 파일 크기: $(du -h "$JAR_FILE" | cut -f1)"
+            
+            # 기존 애플리케이션 종료
+            echo "🔄 기존 애플리케이션 종료 중..."
+            JAVA_PID=$(pgrep -f 'java.*Haru-Mail-Backend' 2>/dev/null || echo "")
+            
+            if [ -n "$JAVA_PID" ]; then
+              echo "🔍 기존 Java 프로세스 발견: PID $JAVA_PID"
+              echo "⏹️ 정상 종료 시도 중..."
+              kill "$JAVA_PID" || echo "⚠️ 정상 종료 실패"
+              
+              # 종료 대기
+              for i in {1..15}; do
+                if ! kill -0 "$JAVA_PID" 2>/dev/null; then
+                  echo "✅ 프로세스 정상 종료됨"
+                  break
+                fi
+                echo "⏳ 프로세스 종료 대기 중... ($i/15)"
+                sleep 2
+              done
+              
+              # 강제 종료 확인
+              if kill -0 "$JAVA_PID" 2>/dev/null; then
+                echo "⚠️ 강제 종료 실행 중..."
+                kill -9 "$JAVA_PID" || echo "❌ 강제 종료 실패"
+                sleep 2
+              fi
+            else
+              echo "ℹ️ 실행 중인 Java 프로세스가 없습니다."
+            fi
+            
+            # 환경변수 설정
+            echo "🔧 환경변수 설정 중..."
+            export GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID"
+            export GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET"
+            export GOOGLE_REDIRECT_URI="$GOOGLE_REDIRECT_URI"
+            export SPRING_DATASOURCE_URL="$SPRING_DATASOURCE_URL"
+            export SPRING_DATASOURCE_USERNAME="$SPRING_DATASOURCE_USERNAME"
+            export DB_PASSWORD="$DB_PASSWORD"
+            export JWT_SECRET_KEY="$JWT_SECRET_KEY"
+            export REDIS_PASSWORD="$REDIS_PASSWORD"
+            export MAIL_USERNAME="$MAIL_USERNAME"
+            export MAIL_PASSWORD="$MAIL_PASSWORD"
+            export CLOUDINARY_API_KEY="$CLOUDINARY_API_KEY"
+            export CLOUDINARY_API_SECRET="$CLOUDINARY_API_SECRET"
+            
+            # 환경변수 검증 (민감정보 제외)
+            echo "🔍 환경변수 검증 중..."
+            if [ -z "$GOOGLE_CLIENT_ID" ]; then
+              echo "❌ GOOGLE_CLIENT_ID 환경변수가 설정되지 않았습니다."
+              exit 1
+            fi
+            echo "✅ 주요 환경변수 설정 완료"
+            
+            # 기존 로그 백업
+            if [ -f app.log ]; then
+              LOG_SIZE=$(stat -c%s app.log 2>/dev/null || echo 0)
+              if [ "$LOG_SIZE" -gt 1048576 ]; then  # 1MB 이상
+                echo "📄 기존 로그 백업 중..."
+                mv app.log "app.log.$(date +%Y%m%d_%H%M%S)"
+              fi
+            fi
+            
+            # 새 애플리케이션 시작
+            echo "🚀 새 애플리케이션 시작 중..."
+            echo "📋 실행 명령어: nohup java -jar $JAR_FILE"
+            nohup java -jar "$JAR_FILE" > app.log 2>&1 &
+            NEW_PID=$!
+            
+            echo "🆔 새 프로세스 PID: $NEW_PID"
+            
+            # 애플리케이션 시작 확인
+            echo "⏳ 애플리케이션 시작 확인 중..."
+            sleep 5
+            
+            # PID 확인
+            if ! kill -0 "$NEW_PID" 2>/dev/null; then
+              echo "❌ 애플리케이션 시작 실패 - 프로세스가 종료됨"
+              echo "🔍 최근 로그 확인:"
+              tail -20 app.log
+              exit 1
+            fi
+            
+            # 추가 대기 및 확인
+            echo "⏳ 애플리케이션 완전 시작 대기 중..."
+            sleep 10
+            
+            if pgrep -f 'java.*Haru-Mail-Backend' > /dev/null; then
+              echo "✅ 애플리케이션 정상 시작됨"
+              echo "🔍 현재 실행 중인 Java 프로세스:"
+              pgrep -f 'java.*Haru-Mail-Backend' -l
+            else
+              echo "❌ 애플리케이션 시작 실패"
+              echo "🔍 현재 Java 프로세스 확인:"
+              pgrep -f 'java' -l || echo "실행 중인 Java 프로세스 없음"
+              echo "🔍 최근 로그 확인:"
+              tail -30 app.log
+              exit 1
+            fi
+            
+            # 로그 확인
+            echo "📋 애플리케이션 로그 확인 중..."
+            if [ -f app.log ]; then
+              echo "🔍 최근 로그 (마지막 10줄):"
+              tail -10 app.log
+              
+              # 에러 로그 확인
+              if grep -i "error\|exception\|failed" app.log | tail -5; then
+                echo "⚠️ 로그에서 에러 발견됨 (위 내용 참고)"
+              else
+                echo "✅ 로그에서 심각한 에러 발견되지 않음"
+              fi
+            else
+              echo "⚠️ 로그 파일이 생성되지 않았습니다."
+            fi
+            
+            # Caddy 서버 재시작
+            echo "🔁 Caddy 서버 재시작 중..."
+            if sudo systemctl restart caddy; then
+              echo "✅ Caddy 서버 재시작 완료"
+              # Caddy 상태 확인
+              if sudo systemctl is-active caddy >/dev/null 2>&1; then
+                echo "✅ Caddy 서버 정상 실행 중"
+              else
+                echo "⚠️ Caddy 서버 상태 확인 필요"
+                sudo systemctl status caddy --no-pager -l
+              fi
+            else
+              echo "❌ Caddy 서버 재시작 실패"
+              sudo systemctl status caddy --no-pager -l
+              exit 1
+            fi
+            
+            # 배포 완료 메시지
+            echo ""
+            echo "🎉 ===== 배포 완료 ====="
+            echo "📅 완료 시간: $(date)"
+            echo "🆔 애플리케이션 PID: $(pgrep -f 'java.*Haru-Mail-Backend' || echo 'PID 확인 실패')"
+            echo "📊 메모리 사용량: $(free -h | grep Mem)"
+            echo "💾 디스크 사용량: $(df -h ~ | tail -1)"
+            echo "🔗 애플리케이션 로그: ~/Haru-Mail-Backend/app.log"
+            echo "✅ 배포가 성공적으로 완료되었습니다!"
+            
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
+          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
